@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "670681728505",
+    "firebase_url": "https://mismapas-1540814235656.firebaseio.com",
+    "project_id": "mismapas-1540814235656",
+    "storage_bucket": "mismapas-1540814235656.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670681728505:android:33855aba6bd2c7d0aa6928",
+        "android_client_info": {
+          "package_name": "frsf.isi.dam.obrapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "670681728505-8tmnl73ogcfmr1ndddjrnbstrl38jnph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA29ZgHZy3naZOFpjC2o8WZF8tufSITOAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670681728505-8tmnl73ogcfmr1ndddjrnbstrl38jnph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670681728505:android:f9ede649b0c5448e",
+        "android_client_info": {
+          "package_name": "isi.dam.moneyvision"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "670681728505-8tmnl73ogcfmr1ndddjrnbstrl38jnph.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA29ZgHZy3naZOFpjC2o8WZF8tufSITOAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670681728505-8tmnl73ogcfmr1ndddjrnbstrl38jnph.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -18,4 +18,11 @@
         android:text="Lista Obras"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></Button>
+
+
+    <Button
+        android:id="@+id/btnMapaObras"
+        android:text="Mapa de Obras"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Button>
 </LinearLayout>
