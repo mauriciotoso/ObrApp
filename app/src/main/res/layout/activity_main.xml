@@ -14,15 +14,31 @@
         android:layout_height="wrap_content"></Button>
 
     <Button
+        android:id="@+id/btnSurface"
+        android:text="Surface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Button>
+
+    <Button
         android:id="@+id/btnListaObras"
         android:text="Lista Obras"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></Button>
 
-
     <Button
-        android:id="@+id/btnMapaObras"
-        android:text="Mapa de Obras"
+        android:id="@+id/btnSalir"
+        android:text="Salir"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></Button>
+
+    <Button
+    android:id="@+id/btnMapaObras"
+    android:text="Mapa de Obras"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></Button>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>
