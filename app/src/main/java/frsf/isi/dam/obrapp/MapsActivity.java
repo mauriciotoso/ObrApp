@@ -1,7 +1,12 @@
 package frsf.isi.dam.obrapp;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -33,125 +38,167 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        //Instancia de mapa
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
+        //Pedir permiso para saber ubicacion actual
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                    9999);
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+
+        //Seteo el tipo de mapa que quiero
+        //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        //mMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+        //mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        //mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
+        //Habilito que se pueda ver el trafico
+        mMap.setTrafficEnabled(true);
+
+        //Habilito que se pueda hacer zoom
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+        //Instancia de marcadores
+        final Map<Integer,MarkerOptions> marcadores = new HashMap<>();
+
+        //Marcador en Crai
+        //mostrarCrai();
+
+        //Marcador en Sydney
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+
+        //Posicion inicial de la camara en Sydney
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //Configuraciones de la rotaciones y gestos
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setRotateGesturesEnabled(true);
+        mMap.getUiSettings().setTiltGesturesEnabled(true);
+
+        //Marcador de clic corto
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                mMap.addMarker(
-                        new MarkerOptions()
+                mMap.addMarker(new MarkerOptions()
                                 .position(latLng)
-                                .title("clic corto")
+                                .title("Clic corto en: "+latLng.latitude+ ", "+latLng.longitude)
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                 );
             }
         });
-        final Map<Integer,MarkerOptions> marcadores = new HashMap<>();
+
+        //Marcador de clic largo
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             Integer i =1;
             @Override
             public void onMapLongClick(LatLng latLng) {
                 MarkerOptions m = new MarkerOptions()
                         .position(latLng)
-                        .title("clic largo")
+                        .title("Clic largo en: "+latLng.latitude+ ", "+latLng.longitude)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
                 mMap.addMarker(m);
                 marcadores.put(i,m);
             }
         });
-        // marcadores.get(iOcultar).visible(false);
-        List<LatLng> lista = this.generarPuntos(3);
-        List<Marker> listaMarkers = new ArrayList<>();
-        LatLng ultimoPunto = null;
-        int i = 1;
-//        for(LatLng punto: lista ){
-//            listaMarkers .add(mMap.addMarker(new MarkerOptions().position(punto)
-//                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
-//                    .title("Punto "+i)
-//                    .snippet("Detalle punto"+i)));
-//            i++;
-//            ultimoPunto = punto;
-//        }
 
+        //Listener de un marcador
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                marker.setVisible(false);
+                return false;
+            }
+        });
+
+        //GENERAR POLIGONO
+
+        //Creo la lista de puntos a usar para el poligono
+        List<LatLng> lista = this.generarPuntos(1);
+        LatLng ultimoPunto = null;
+
+        //Uno los puntos, pinto de rojo el borde y de azul el interior
         PolygonOptions linea = new PolygonOptions();
         for(LatLng punto: lista ){
             linea.add(punto).fillColor(Color.RED).strokeColor(Color.BLUE);
             ultimoPunto = punto;
         }
         googleMap.addPolygon(linea);
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+        //Animacion de la posición inicial a un punto en especifico con un zoom
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(ultimoPunto)
                 .zoom(15)
-                .build();     // Creates a CameraPosition from the builder
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                3000,null);
-    }
+                .build();
 
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),3000,null);
+    }
 
     private void mostrarCrai(){
         LatLng crai= new LatLng(-31.620816,-60.747582);
-        Marker QLSG = mMap.addMarker(new MarkerOptions().position(crai)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.club))
+        mMap.addMarker(new MarkerOptions().position(crai)
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.club))
                 .title("CRAI")
                 .snippet("Club de rugby ateneo inmaculada"));
+
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(crai)
                 .zoom(17)
                 .bearing(90)
                 .tilt(30)
-                .build();     // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                    3000,null);
+                .build();
+
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),3000,null);
     }
 
-
     private List<LatLng> generarPuntos(Integer n){
+
+        //Agego dos puntos iniciales
         List<LatLng> lista = new ArrayList<>();
         double norte = -31.614339;
         double oeste = -60.702693;
-        double sur =-31.644426;
+        double sur = -31.644426;
         double este = -60.687270;
-        double lonDiff = Math.abs(oeste-este);
-        double latDiff = Math.abs(sur-norte);
         LatLng punto1 = new LatLng(norte,oeste);
         LatLng punto2 = new LatLng(sur,este);
         lista.add(punto1);
         lista.add(punto2);
-        Random r = new Random();
 
+        //Agrego n puntos mas cercanos a punto 1 de forma aleatoria
+        Random r = new Random();
         for(int i =0; i<n;i++){
             double  l1 = r.nextDouble()/1000.0;
             double  l2 = r.nextDouble()/1000.0;
             lista.add(new LatLng(norte-l1,oeste-l2));
-          //  l1 = r.nextDouble()/100.0;
-          //  l2 = r.nextDouble()/100.0;
-          //  lista.add(new LatLng(norte-l1,oeste-l2));
         }
+
         return lista;
     }
 
+    //Habilitar ir a la posicion actual
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if(requestCode==9999 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            mMap.setMyLocationEnabled(true);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package frsf.isi.dam.obrapp.db;
+package frsf.isi.dam.obrapp.room;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

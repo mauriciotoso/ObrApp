@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -16,9 +15,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import frsf.isi.dam.obrapp.db.DBClient;
-import frsf.isi.dam.obrapp.db.ObraAppDB;
-import frsf.isi.dam.obrapp.db.ObraDao;
+import frsf.isi.dam.obrapp.room.ObraDao;
+import frsf.isi.dam.obrapp.room.RoomDB;
 import frsf.isi.dam.obrapp.modelo.Obra;
 
 public class ObraListActivity extends AppCompatActivity {
@@ -32,14 +30,26 @@ public class ObraListActivity extends AppCompatActivity {
     List<Obra> listaObrasDataset;
     Obra obraSeleccionada;
     TextView tvObraSelec;
+    RoomDB database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_obra_list);
+
+        btnMenu = (Button) findViewById(R.id.btnObraMenuPpal);
+        btnAdd = (Button) findViewById(R.id.btnAddObra);
+        btnEditarObra = (Button) findViewById(R.id.btnEditarObra);
+        btnBorrarObra= (Button) findViewById(R.id.btnBorrarObra);
         tvObraSelec = (TextView) findViewById(R.id.tvObraSeleccionada);
-        lvObras = (ListView) findViewById(R.id.listaObras);
         lvObras.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        lvObras = (ListView) findViewById(R.id.listaObras);
+
+        btnBorrarObra.setEnabled(false);
+        btnEditarObra.setEnabled(false);
+
+        database=RoomDB.getInstance(this);
+
         lvObras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -49,32 +59,30 @@ public class ObraListActivity extends AppCompatActivity {
                 tvObraSelec.setText("SELECCIONO LA OBRA "+ obraSeleccionada.getId()+ ":"+ obraSeleccionada.getDescripcion());
             }
         });
-        btnMenu = (Button) findViewById(R.id.btnObraMenuPpal);
-        btnAdd = (Button) findViewById(R.id.btnAddObra);
-        btnEditarObra = (Button) findViewById(R.id.btnEditarObra);
-        btnBorrarObra= (Button) findViewById(R.id.btnBorrarObra);
-        btnBorrarObra.setEnabled(false);
-        btnEditarObra.setEnabled(false);
+
         btnBorrarObra.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BorrarObraAsyncTask tarea = new BorrarObraAsyncTask();
-                tarea.execute(obraSeleccionada);
+                new BorrarObraAsyncTask().execute(obraSeleccionada);
             }
         });
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ObraListActivity.this,ObraActivity.class);
-                startActivity(i);            }
+                startActivity(i);
+            }
         });
 
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ObraListActivity.this,MainActivity.class);
-                startActivity(i);            }
+                startActivity(i);
+            }
         });
+
         btnEditarObra.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,14 +99,16 @@ public class ObraListActivity extends AppCompatActivity {
                 lvObras.setAdapter(adapter);
             }
         };
+
         final Runnable cargarObras = new Runnable() {
             @Override
             public void run() {
-                ObraDao dao = DBClient.getInstance(ObraListActivity.this).getObraDb().obraDao();
+                ObraDao dao = database.obraDao();
                 listaObrasDataset =dao.getAll();
                 runOnUiThread( hiloUpdateLista );
             }
         };
+
         Thread t1 = new Thread(cargarObras);
         t1.start();
     }
@@ -106,7 +116,7 @@ public class ObraListActivity extends AppCompatActivity {
     class BorrarObraAsyncTask extends AsyncTask<Obra,Void,Void> {
         @Override
         protected Void doInBackground(Obra... obra) {
-            ObraDao dao = DBClient.getInstance(ObraListActivity.this).getObraDb().obraDao();
+            ObraDao dao = database.obraDao();
             dao.delete(obra[0]);
             listaObrasDataset.clear();
             listaObrasDataset.addAll(dao.getAll());
@@ -121,7 +131,5 @@ public class ObraListActivity extends AppCompatActivity {
             lvObras.clearChoices();
             obraSeleccionada = null;
         }
-
     }
-
 }

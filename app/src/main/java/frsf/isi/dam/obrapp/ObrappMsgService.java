@@ -71,15 +71,11 @@ public class ObrappMsgService extends FirebaseMessagingService {
         Log.d(TAG, "ENVIAR token: " + token);
     }
 
-
     private void handleNow(String token){
         Log.d(TAG, "ENVIAR token: " + token);
     }
 
-
     private void sendRegistrationToServer(String token){
         Log.d(TAG, "ENVIAR token: " + token);
     }
-
-
 }

@@ -26,19 +26,15 @@
         android:layout_height="wrap_content"></Button>
 
     <Button
-        android:id="@+id/btnSalir"
-        android:text="Salir"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Button>
-
-    <Button
     android:id="@+id/btnMapaObras"
     android:text="Mapa de Obras"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"></Button>
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btnSalir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Salir"></Button>
+
 </LinearLayout>
